@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 import pickle
+import plotly.graph_objects as go
 
 with open('log_regression3.pkl', 'rb') as file:
    log_regression = pickle.load(file)
@@ -21,6 +22,9 @@ st.markdown("""Programming 2 Final project \n Georgetown MSBA SAXA cohort""")
 
 st.title('Logistic regression model for linkedin users')
 st.image("business_handshake.png", caption="This is a sample image", width=300)
+
+chart_placeholder = st.empty()
+
 with st.form('user_input'):
     
     
@@ -90,7 +94,7 @@ with st.form('user_input'):
        gender_female = 0
 
     age = st.number_input('Enter your age',
-                          min_value = 0, max_value = 99,
+                          min_value = 16, max_value = 99,
                           help="Please enter your age in years. Use whole numbers only with a max age of 99")
     
     button = st.form_submit_button()
@@ -108,9 +112,32 @@ if button:
    probability = log_regression.predict_proba(df_pred)[0,1]
    if prediction == 1: 
       text = f' You are a linkedin user, {round(probability * 100)}%'
+      predicted_class = "Linkedin User"
    else:
+      predicted_class = "Not a Linkedin User"
       text = f' You are not a linkedin user, {round(probability*100)}%'
    #text = f' You are this kind of user {prediction}'
+   
+   # Gauge chart
+   fig = go.Figure(go.Indicator(
+      mode="gauge+number",
+      value=probability * 100,
+      number={'valueformat': '.2f', 'suffix': '%'},
+      title={'text': f"Prediction: {predicted_class}"},
+      gauge={'axis': {'range': [0, 100]},
+            'bar': {'color': "rgba(0,0,0,0)"},
+            'steps': [
+                  {'range': [0, 50], 'color': "rgba(100,0,0,50)"},
+                  {'range': [50, 100], 'color': "rgba(0,100,0,50)"}],
+            'shape': "angular",  # Circular gauge
+            'threshold': {
+                  'line': {'color': "orange", 'width': 10},  # Needle-like line
+                  'thickness': 0.75,
+                  'value': probability * 100  # Position of the needle
+            }
+            }))
+
+   chart_placeholder.plotly_chart(fig)
 
    st.write(text)
 
