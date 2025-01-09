@@ -21,9 +21,8 @@ st.markdown("Author: Jason Harris")
 st.markdown("""Programming 2 Final project \n Georgetown MSBA SAXA cohort""")
 
 st.title('Logistic regression model for linkedin users')
-st.image("business_handshake.png", caption="This is a sample image", width=300)
+chart_placeholder = st.image("business_handshake.png", caption="This is a sample image", width=300)
 
-chart_placeholder = st.empty()
 
 with st.form('user_input'):
     
